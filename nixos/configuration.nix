@@ -12,6 +12,7 @@
     # If you want to use modules from other flakes (such as nixos-hardware):
     # inputs.hardware.nixosModules.common-cpu-amd
     # inputs.hardware.nixosModules.common-ssd
+    inputs.nixvim.homeModules.nixvim
 
     # You can also split up your configuration and import pieces of it here:
     # ./users.nix
@@ -50,6 +51,10 @@
     # Opinionated: disable channels
     channel.enable = false;
   };
+
+
+  # RYAN SETUP
+
   #sway setup
   programs.sway.enable = true;
   security.polkit.enable = true;
@@ -62,10 +67,12 @@
 
   # wifi
   networking.networkmanager.enable = true;
-
-
-  # TODO: Set your hostname
   networking.hostName = "nixos";
+
+
+  # bluetooth
+  hardware.bluetooth = { enable = true; powerOnBoot = false;};
+  services.blueman.enable = true;
 
   # TODO: Configure your system-wide user settings (groups, etc), add more users as needed.
   users.users = {

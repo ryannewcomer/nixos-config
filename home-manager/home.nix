@@ -55,12 +55,33 @@
 	pkgs.eza
 	pkgs.fastfetch
 	pkgs.lazygit
-	pkgs.gh ];
+	pkgs.gh 
+	pkgs.nixd
+	];
 
 
 	# programs settings
-  programs.neovim.enable = true;
   programs.home-manager.enable = true;
+
+
+  programs.nixvim = {
+  	enable = true;
+	defaultEditor = true;
+	clipboard = {register = "unnamedplus";};
+	globals = {
+		mapleader = " ";
+		};
+	opts = {
+		relativenumber = true;
+		tabstop = 4;
+		};
+		lsp = {
+			inlayHints.enable = true;
+			servers = {
+				lua_ls.enable = true;
+				nixd.enable = true;
+				};
+				};
   programs.zoxide = { enable = true; enableFishIntegration = true;};
   programs.git = {
   	enable = true;
@@ -73,12 +94,15 @@
 		};
   programs.lazygit.enable = true;
 
-  programs.kitty.enable = true;
+  programs.kitty = {
+  	enable = true;
+	shellIntegration.enableFishIntegration = true;
+	}
 
   programs.fish = {
   	enable = true;
 
-	shellAliases = { l = "eza -l";};
+	shellAliases = { l = "eza -l"; "c" = "clear";};
 	};
 
 
