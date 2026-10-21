@@ -41,7 +41,6 @@
     homeDirectory = "/home/ryanh";
     sessionVariables = 	{
 	TERM = "kitty";
-        EDITOR = "nvim";
 	};
   };
 
@@ -75,6 +74,7 @@
 		relativenumber = true;
 		tabstop = 4;
 		};
+		colorschemes.nord.enable = true;
 		lsp = {
 			inlayHints.enable = true;
 			servers = {
@@ -82,6 +82,27 @@
 				nixd.enable = true;
 				};
 				};
+		plugins = {
+				cmp = {
+						enable = true;
+						autoEnableSources = true;
+						settings.sources = [ 
+								{ name = "nvim_lsp"; }
+								];
+						};
+				treesitter = {
+						enable = true;
+						highlight.enable = true;
+						grammarPackages = with config.programs.nixvim.plugins.treesitter.package.builtGrammars; [
+								bash
+								nix
+								fish
+								lua
+								python
+						];
+				};
+				};
+  };
   programs.zoxide = { enable = true; enableFishIntegration = true;};
   programs.git = {
   	enable = true;
@@ -97,7 +118,7 @@
   programs.kitty = {
   	enable = true;
 	shellIntegration.enableFishIntegration = true;
-	}
+	};
 
   programs.fish = {
   	enable = true;
