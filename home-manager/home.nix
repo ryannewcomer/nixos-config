@@ -5,8 +5,10 @@
   lib,
   config,
   pkgs,
+  imports,
   ...
-}: {
+}:
+{
   # You can import other home-manager modules here
   imports = [
     # If you want to use home-manager modules from other flakes (such as nix-colors):
@@ -14,6 +16,8 @@
 
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
+    ./nixvim
+    inputs.noctalia.homeModules.default
   ];
 
   nixpkgs = {
@@ -39,103 +43,98 @@
   home = {
     username = "ryanh";
     homeDirectory = "/home/ryanh";
-    sessionVariables = 	{
-	TERM = "kitty";
-	};
+    sessionVariables = {
+      TERM = "kitty";
+      SHELL = "fish";
+    };
   };
 
   # Add stuff for your user as you see fit:
-   home.packages = [
-   	pkgs.firefox
-   	pkgs.htop
-	pkgs.kitty
-	pkgs.zoxide
-	pkgs.fish
-	pkgs.eza
-	pkgs.fastfetch
-	pkgs.lazygit
-	pkgs.gh 
-	pkgs.nixd
-	];
+  home.packages = [
+    pkgs.firefox
+    pkgs.htop
+    pkgs.kitty
+    pkgs.zoxide
+    pkgs.fish
+    pkgs.eza
+    pkgs.fastfetch
+    pkgs.lazygit
+    pkgs.nixd
+    pkgs.nixfmt
+    pkgs.stylua
+    pkgs.shfmt
+  ];
 
-
-	# programs settings
+  # programs settings
   programs.home-manager.enable = true;
 
-
-  programs.nixvim = {
-  	enable = true;
-	defaultEditor = true;
-	clipboard = {register = "unnamedplus";};
-	globals = {
-		mapleader = " ";
-		};
-	opts = {
-		relativenumber = true;
-		tabstop = 4;
-		};
-		colorschemes.nord.enable = true;
-		lsp = {
-			inlayHints.enable = true;
-			servers = {
-				lua_ls.enable = true;
-				nixd.enable = true;
-				};
-				};
-		plugins = {
-				cmp = {
-						enable = true;
-						autoEnableSources = true;
-						settings.sources = [ 
-								{ name = "nvim_lsp"; }
-								];
-						};
-				treesitter = {
-						enable = true;
-						highlight.enable = true;
-						grammarPackages = with config.programs.nixvim.plugins.treesitter.package.builtGrammars; [
-								bash
-								nix
-								fish
-								lua
-								python
-						];
-				};
-				};
+  programs.zoxide = {
+    enable = true;
+    enableFishIntegration = true;
   };
-  programs.zoxide = { enable = true; enableFishIntegration = true;};
   programs.git = {
-  	enable = true;
-	settings = {
-		user.email = "ryanhungryan@gmail.com";
-		user.name = "Ryan Hung";
-		
-		init.defaultBranch = "main";
-		};
-		};
+    enable = true;
+    settings = {
+      user.email = "ryanhungryan@gmail.com";
+      user.name = "Ryan Hung";
+
+      init.defaultBranch = "main";
+    };
+  };
+  programs.gh = {
+    enable = true;
+    gitCredentialHelper.enable = true;
+  };
   programs.lazygit.enable = true;
 
   programs.kitty = {
-  	enable = true;
-	shellIntegration.enableFishIntegration = true;
-	};
+    enable = true;
+    settings = {
+      shell = "fish";
+    };
+    shellIntegration.enableFishIntegration = true;
+  };
 
   programs.fish = {
-  	enable = true;
+    enable = true;
 
-	shellAliases = { l = "eza -l"; "c" = "clear";};
-	};
+    shellAliases = {
+      l = "eza -l";
+      "c" = "clear";
+      "lg" = "lazygit";
+      "hs" = "home-manager switch --flake .#ryanh@nixos";
+      "ns" = "nixos-rebuild switch --flake .#nixos";
+    };
+  };
 
+  wayland.windowManager.sway = {
+    enable = true;
+    wrapperFeatures.gtk = true;
 
-wayland.windowManager.sway = {
-	enable = true;
-	wrapperFeatures.gtk = true;
+    config = rec {
+      modifier = "Mod4";
+      terminal = "kitty";
+      startup = [
+        { command = "noctalia"; }
+      ];
+      keybindings = lib.mkOptionDefault {
+        "${modifier}+d" = "exec noctalia msg panel-toggle launcher";
+        "${modifier}+s" = "exec noctalia msg panel-toggle control-center";
+        "${modifier}+comma" = "exec noctalia msg settings-toggle";
+      };
+    };
+  };
 
-	config = rec {
-		modifier = "Mod4";
-		terminal = "kitty";
-		};
-		};
+  programs.noctalia = {
+    enable = true;
+    settings = {
+      theme = {
+        mode = "dark";
+        source = "builtin";
+        builtin = "Nord";
+      };
+    };
+  };
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   home.stateVersion = "25.11";

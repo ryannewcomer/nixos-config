@@ -6,7 +6,8 @@
   config,
   pkgs,
   ...
-}: {
+}:
+{
   # You can import other NixOS modules here
   imports = [
     # If you want to use modules from other flakes (such as nixos-hardware):
@@ -51,29 +52,38 @@
     channel.enable = false;
   };
 
-
   # RYAN SETUP
 
   #sway setup
   programs.sway.enable = true;
   security.polkit.enable = true;
 
-
   # boot loader
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-
 
   # wifi
   networking.networkmanager.enable = true;
   networking.hostName = "nixos";
 
-
   # bluetooth
-  hardware.bluetooth = { enable = true; powerOnBoot = false;};
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = false;
+  };
   services.blueman.enable = true;
 
-  # TODO: Configure your system-wide user settings (groups, etc), add more users as needed.
+  programs.fish.enable = true;
+
+  services.tuned.enable = true;
+
+  services.upower.enable = true;
+
+  # Noctalia
+  environment.systemPackages = [
+    inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
+  ];
+
   users.users = {
     # FIXME: Replace with your username
     ryanh = {
@@ -86,7 +96,10 @@
         # TODO: Add your SSH public key(s) here, if you plan on using SSH to connect
       ];
       # TODO: Be sure to add any other groups you need (such as networkmanager, audio, docker, etc)
-      extraGroups = ["wheel" "networkmanager"];
+      extraGroups = [
+        "wheel"
+        "networkmanager"
+      ];
     };
   };
 
