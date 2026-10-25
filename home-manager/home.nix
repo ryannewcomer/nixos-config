@@ -103,7 +103,7 @@
       "c" = "clear";
       "lg" = "lazygit";
       "hs" = "home-manager switch --flake .#ryanh@nixos";
-      "ns" = "nixos-rebuild switch --flake .#nixos";
+      "ns" = "sudo nixos-rebuild switch --flake .#nixos";
     };
   };
 
@@ -114,6 +114,7 @@
     config = rec {
       modifier = "Mod4";
       terminal = "kitty";
+      defaultWorkspace = "1";
       startup = [
         { command = "noctalia"; }
       ];
@@ -132,6 +133,11 @@
         mode = "dark";
         source = "builtin";
         builtin = "Nord";
+      };
+
+      wallpaper = {
+        enable = true;
+        default.path = "/home/ryanh/Pictures/wallpaper/nixos.png";
       };
     };
   };
